@@ -9,11 +9,11 @@ DB sqli3 :❌
 
 
 features principales : 
-  - role (admin, prof, user) ❌
-  - note ❌
-  - planing ❌
+  - role (admin, prof, user)(CRUD) ❌
+  - note(CRUD) ❌
+  - planing(CRUD) ❌
 
 
 features secondaire: 
-  - messagerie ❌ 
-  - absent/retard ❌ 
+  - messagerie (CRUD)❌ 
+  - absent/retard (CRUD) ❌ 
