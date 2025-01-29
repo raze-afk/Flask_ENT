@@ -1,8 +1,9 @@
--- MySQL dump 10.16  Distrib 10.1.48-MariaDB, for debian-linux-gnu (x86_64)
+/*M!999999\- enable the sandbox mode */ 
+-- MariaDB dump 10.19-11.4.3-MariaDB, for debian-linux-gnu (x86_64)
 --
--- Host: localhost    Database: db
+-- Host: localhost    Database: database
 -- ------------------------------------------------------
--- Server version	10.1.48-MariaDB-0+deb9u2
+-- Server version	11.4.3-MariaDB-1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -13,7 +14,7 @@
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+/*M!100616 SET @OLD_NOTE_VERBOSITY=@@NOTE_VERBOSITY, NOTE_VERBOSITY=0 */;
 
 --
 -- Table structure for table `cours`
@@ -28,7 +29,7 @@ CREATE TABLE `cours` (
   `creater_user` tinyint(4) DEFAULT NULL,
   `user_concerner` tinyint(4) DEFAULT NULL,
   `devoir` varchar(40) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -37,7 +38,8 @@ CREATE TABLE `cours` (
 
 LOCK TABLES `cours` WRITE;
 /*!40000 ALTER TABLE `cours` DISABLE KEYS */;
-INSERT INTO `cours` VALUES (1,'Mathématiques',2,1,'Chapitre 1 : Exercices sur les équations');
+INSERT INTO `cours` VALUES
+(1,'Mathématiques',2,1,'Chapitre 1 : Exercices sur les équations');
 /*!40000 ALTER TABLE `cours` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -52,7 +54,7 @@ CREATE TABLE `devoir` (
   `id` tinyint(4) DEFAULT NULL,
   `user_id` tinyint(4) DEFAULT NULL,
   `text` varchar(43) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -61,7 +63,8 @@ CREATE TABLE `devoir` (
 
 LOCK TABLES `devoir` WRITE;
 /*!40000 ALTER TABLE `devoir` DISABLE KEYS */;
-INSERT INTO `devoir` VALUES (1,1,'Faire les exercices 3, 5 et 7 du chapitre 1');
+INSERT INTO `devoir` VALUES
+(1,1,'Faire les exercices 3, 5 et 7 du chapitre 1');
 /*!40000 ALTER TABLE `devoir` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -78,7 +81,7 @@ CREATE TABLE `note` (
   `cours_id` tinyint(4) DEFAULT NULL,
   `note` decimal(3,1) DEFAULT NULL,
   `commentaire` varchar(32) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -87,7 +90,9 @@ CREATE TABLE `note` (
 
 LOCK TABLES `note` WRITE;
 /*!40000 ALTER TABLE `note` DISABLE KEYS */;
-INSERT INTO `note` VALUES (1,1,1,15.5,'Bon travail, continue comme ça !'),(2,2,1,18.0,'Excellente performance.');
+INSERT INTO `note` VALUES
+(1,1,1,15.5,'Bon travail, continue comme ça !'),
+(2,2,1,18.0,'Excellente performance.');
 /*!40000 ALTER TABLE `note` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -101,7 +106,7 @@ DROP TABLE IF EXISTS `sqlite_sequence`;
 CREATE TABLE `sqlite_sequence` (
   `name` varchar(6) DEFAULT NULL,
   `seq` tinyint(4) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -110,7 +115,11 @@ CREATE TABLE `sqlite_sequence` (
 
 LOCK TABLES `sqlite_sequence` WRITE;
 /*!40000 ALTER TABLE `sqlite_sequence` DISABLE KEYS */;
-INSERT INTO `sqlite_sequence` VALUES ('user',5),('cours',1),('devoir',1),('note',2);
+INSERT INTO `sqlite_sequence` VALUES
+('user',5),
+('cours',1),
+('devoir',1),
+('note',2);
 /*!40000 ALTER TABLE `sqlite_sequence` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -128,7 +137,7 @@ CREATE TABLE `user` (
   `mail` varchar(23) DEFAULT NULL,
   `mdp` varchar(11) DEFAULT NULL,
   `status` varchar(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -137,7 +146,11 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'Dupont','Jean','jean.dupont@example.com','password123','etudiant'),(2,'Curie','Marie','marie.curie@example.com','password456','professeur'),(4,'Doe','John','john.doe@example.com','mypassword','admin'),(5,'Doe','John','caca@example.com','mypassword','admin');
+INSERT INTO `user` VALUES
+(1,'Dupont','Jean','jean.dupont@example.com','password123','etudiant'),
+(2,'Curie','Marie','marie.curie@example.com','password456','professeur'),
+(4,'Doe','John','john.doe@example.com','mypassword','admin'),
+(5,'Doe','John','caca@example.com','mypassword','admin');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -148,6 +161,6 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+/*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2024-04-30 16:42:42
+-- Dump completed on 2025-01-29 15:53:57
