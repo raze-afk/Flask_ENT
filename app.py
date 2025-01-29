@@ -5,7 +5,7 @@ app = Flask(__name__)
 app.config["DEBUG"] = True
 
 # Configuration de la connexion à la base de données MySQL existante
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost/database?charset=utf8mb4'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost/database?collation=utf8mb4_general_ci'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -14,7 +14,7 @@ db = SQLAlchemy(app)
 # Modèle de l'utilisateur (correspondant à ta base existante)
 #------------------------------------------------------------------------------
 class User(db.Model):
-    __tablename__ = 'users'  # Assurez-vous que ce nom correspond à la table existante
+    __tablename__ = 'user'  # Assurez-vous que ce nom correspond à la table existante
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100), nullable=False)
     prenom = db.Column(db.String(100), nullable=False)
