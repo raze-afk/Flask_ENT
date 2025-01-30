@@ -6,7 +6,7 @@ bp = Blueprint('auth_routes', __name__)
 
 @bp.route('/', methods=['GET'])
 def home():
-    return '<h1>API Utilisateurs</h1><p>Bienvenue sur l\'API Flask.</p>'
+    return redirect(url_for('auth_routes.login'))
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
