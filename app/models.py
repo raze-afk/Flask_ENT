@@ -17,3 +17,11 @@ class Cours(db.Model):
     user_concerner = db.Column(db.Integer, nullable=False)
     devoir = db.Column(db.String(100), nullable=True)
 
+
+class Note(db.Model):
+    __tablename__ = 'note'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(100), nullable=False)
+    cours_id = db.Column(db.String(100), nullable=False)
+    nb_note = db.Column(db.String(150), unique=True, nullable=False)
+    commentaire = db.Column(db.String(255), nullable=False)
