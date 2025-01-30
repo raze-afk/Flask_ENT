@@ -25,3 +25,9 @@ class Note(db.Model):
     cours_id = db.Column(db.String(100), nullable=False)
     nb_note = db.Column(db.String(150), unique=True, nullable=False)
     commentaire = db.Column(db.String(255), nullable=False)
+
+class Devoir(db.Model):
+    __tablename__ = 'devoir'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    text = db.Column(db.String(255), nullable=False)

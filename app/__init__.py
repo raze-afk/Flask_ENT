@@ -12,10 +12,11 @@ def create_app():
     db.init_app(app)
 
     with app.app_context():
-        from .routes import user_routes, cours_routes, note_routes, auth_routes
+        from .routes import user_routes, cours_routes, note_routes, auth_routes, devoirs_routes
         app.register_blueprint(user_routes.bp)
         app.register_blueprint(cours_routes.bp)
         app.register_blueprint(note_routes.bp)
         app.register_blueprint(auth_routes.bp)
+        app.register_blueprint(devoirs_routes.bp)
     return app
 
