@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Intranet Professeur</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <h1 class="text-center text-2xl font-bold text-gray-800 mb-6">Espace Professeur</h1>
+
+        <!-- Section pour les Cours -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Gestion des Cours</h2>
+            <form action="{{ url_for('cours_routes.create_cours') }}" method="POST" class="mb-4">
+                <input type="hidden" name="creater_user" value="{{ user.id }}">
+                <input type="text" name="name" placeholder="Nom du cours" required class="border p-2 mb-2">
+                <button type="submit" class="bg-blue-500 text-white p-2">Créer un Cours</button>
+            </form>
+            <table class="w-full border-collapse border border-gray-300">
+                <thead class="bg-gray-800 text-white">
+                    <tr>
+                        <th class="p-2 border">Nom du Cours</th>
+                        <th class="p-2 border">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cours in cours %}
+                        <tr class="bg-gray-100">
+                            <td class="p-2 border">{{ cours.name }}</td>
+                            <td class="p-2 border">
+                                <form action="{{ url_for('auth_routes.update_cours', cours_id=cours.id) }}" method="POST" style="display:inline;">
+                                    <input type="text" name="name" value="{{ cours.name }}" required class="border p-1">
+                                    <button type="submit" class="bg-yellow-500 text-white p-1">Mettre à jour</button>
+                                </form>
+                                <form action="{{ url_for('auth_routes.delete_cours', cours_id=cours.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="bg-red-500 text-white p-1">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section pour les Devoirs -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Gestion des Devoirs</h2>
+            <form action="{{ url_for('devoirs_routes.create_devoir') }}" method="POST" class="mb-4">
+                <input type="hidden" name="user_id" value="{{ user.id }}">
+                <textarea name="text" placeholder="Description du devoir" required class="border p-2 mb-2"></textarea>
+                <button type="submit" class="bg-blue-500 text-white p-2">Créer un Devoir</button>
+            </form>
+            <ul class="mt-4">
+                {% for devoir in devoirs %}
+                    <li class="bg-gray-100 p-2 flex justify-between items-center">
+                        {{ devoir.text }}
+                        <form action="{{ url_for('devoirs_routes.delete_devoir', devoir_id=devoir.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="bg-red-500 text-white p-1">Supprimer</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <!-- Section pour les Notes -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Gestion des Notes</h2>
+            <form action="{{ url_for('note_routes.create_note') }}" method="POST" class="mb-4">
+                <input type="number" name="user_id" placeholder="ID de l'élève" required class="border p-2 mb-2">
+                <input type="number" name="cours_id" placeholder="ID du cours" required class="border p-2 mb-2">
+                <input type="number" name="nb_note" placeholder="Note" required class="border p-2 mb-2">
+                <textarea name="commentaire" placeholder="Commentaire" class="border p-2 mb-2"></textarea>
+                <button type="submit" class="bg-blue-500 text-white p-2">Ajouter une Note</button>
+            </form>
+            <table class="w-full border-collapse border border-gray-300">
+                <thead class="bg-gray-800 text-white">
+                    <tr>
+                        <th class="p-2 border">Élève</th>
+                        <th class="p-2 border">Cours</th>
+                        <th class="p-2 border">Note</th>
+                        <th class="p-2 border">Commentaire</th>
+                        <th class="p-2 border">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for note in notes %}
+                        <tr class="bg-gray-100">
+                            <td class="p-2 border">{{ note.user.nom }} {{ note.user.prenom }}</td>
+                            <td class="p-2 border">{{ note.cours.name }}</td>
+                            <td class="p-2 border">{{ note.nb_note }}/20</td>
+                            <td class="p-2 border">{{ note.commentaire }}</td>
+                            <td class="p-2 border">
+                                <form action="{{ url_for('note_routes.delete_note', note_id=note.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="bg-red-500 text-white p-1">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section pour les Classes -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Classes</h2>
+            <ul class="mt-4">
+                {% for classe in classes %}
+                    <li class="bg-gray-100 p-2">
+                        {{ classe.name }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <!-- Section pour les Élèves -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Élèves</h2>
+            <ul class="mt-4">
+                {% for eleve in eleves %}
+                    <li class="bg-gray-100 p-2">
+                        {{ eleve.nom }} {{ eleve.prenom }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+</body>
+</html>
+
