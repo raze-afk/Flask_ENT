@@ -12,7 +12,7 @@ def home():
 def login():
     data = request.get_json()
     user = User.query.filter_by(mail=data['mail']).first()
-    if user and check_password_hash(user.mdp, data['mdp']):
+    if user and user.mdp == data['mdp']:
         return jsonify({'message': 'Login successful!', 'status': user.status})
     else:
         return jsonify({'message': 'Invalid credentials!'}), 401
