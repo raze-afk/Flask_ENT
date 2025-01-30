@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from ..models import Note
+from ..models import Note, Cours
 from .. import db
 
 bp = Blueprint('note_routes', __name__)
@@ -30,6 +30,10 @@ def create_note():
         data = request.json
         if not all(key in data for key in ['user_id', 'cours_id', 'nb_note', 'commentaire']):
             return jsonify({"error": "Données incomplètes"}), 400
+
+        cours = Cours.query.get(data['cours_id'])
+        if not cours:
+            return jsonify({"error": "Cours non trouvé"}), 404
 
         new_note = Note(
             user_id=data['user_id'],
@@ -71,7 +75,8 @@ def update_note():
 @bp.route('/api/delete/note', methods=['DELETE'])
 def delete_note():
     try:
-        note_id = request.args.get('id')
+        data = request.json
+        note_id = data.get('id')
 
         if not note_id:
             return jsonify({"error": "ID requis"}), 400

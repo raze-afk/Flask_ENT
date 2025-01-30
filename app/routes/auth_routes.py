@@ -1,8 +1,12 @@
 from flask import Blueprint, request, jsonify, render_template, redirect, url_for, flash, session
-from ..models import User
+from ..models import User, Cours, Devoir, Note, Classe,  classe_eleve
 from .. import db
 
 bp = Blueprint('auth_routes', __name__)
+
+@bp.route('/', methods=['GET'])
+def home():
+    return '<h1>API Utilisateurs</h1><p>Bienvenue sur l\'API Flask.</p>'
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -13,7 +17,12 @@ def login():
         if user and user.mdp == password:
             session['user_id'] = user.id
             flash('Login successful!', 'success')
-            return redirect(url_for('user_routes.home'))
+            if user.status == 'admin':
+                return redirect(url_for('auth_routes.admin_home'))
+            elif user.status == 'etudiant':
+                return redirect(url_for('auth_routes.student_home'))
+            elif user.status == 'professeur':
+                return redirect(url_for('auth_routes.teacher_home'))
         else:
             flash('Invalid email or password', 'danger')
     return render_template('login.html')
@@ -23,4 +32,36 @@ def logout():
     session.pop('user_id', None)
     flash('You have been logged out.', 'info')
     return redirect(url_for('auth_routes.login'))
+
+
+@bp.route('/admin_home', methods=['GET'])
+def admin_home():
+    user_id = session.get('user_id')
+    user = User.query.get(user_id)
+    cours = Cours.query.all()
+    devoirs = Devoir.query.all()
+    notes = Note.query.all()
+    classes = Classe.query.all()
+    eleves = User.query.filter_by(status='etudiant').all()
+    return render_template('admin.html', user=user, cours=cours, devoirs=devoirs, notes=notes, classes=classes, eleves=eleves, users=User.query.all())
+
+@bp.route('/student_home', methods=['GET'])
+def student_home():
+    user_id = session.get('user_id')
+    user = User.query.get(user_id)
+    cours = Cours.query.all()  # Vous pouvez filtrer les cours spécifiques à l'étudiant si nécessaire
+    devoirs = Devoir.query.join(Classe).join(classe_eleve).filter(classe_eleve.c.user_id == user_id).all()
+    notes = Note.query.filter_by(user_id=user_id).all()
+    return render_template('student.html', user=user, cours=cours, devoirs=devoirs, notes=notes)
+
+@bp.route('/teacher_home', methods=['GET'])
+def teacher_home():
+    user_id = session.get('user_id')
+    user = User.query.get(user_id)
+    cours = Cours.query.filter_by(creater_user=user_id).all()
+    devoirs = Devoir.query.all()
+    notes = Note.query.all()
+    classes = Classe.query.all()
+    eleves = User.query.filter_by(status='etudiant').all()
+    return render_template('teacher.html', user=user, cours=cours, devoirs=devoirs, notes=notes, classes=classes, eleves=eleves)
 

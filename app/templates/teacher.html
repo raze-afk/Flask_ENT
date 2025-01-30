@@ -5,6 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Intranet Professeur</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function createItem(url, data, itemType) {
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(result) {
+                    alert(result.message);
+                    location.reload();
+                },
+                error: function(error) {
+                    alert(`Erreur lors de la création du ${itemType}: ${error.responseJSON.error}`);
+                }
+            });
+        }
+
+        function updateItem(url, data, itemType) {
+            $.ajax({
+                url: url,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(result) {
+                    alert(result.message);
+                    location.reload();
+                },
+                error: function(error) {
+                    alert(`Erreur lors de la mise à jour du ${itemType}: ${error.responseJSON.error}`);
+                }
+            });
+        }
+
+        function deleteItem(url, itemId, itemType) {
+            if (confirm(`Êtes-vous sûr de vouloir supprimer ce ${itemType} ?`)) {
+                $.ajax({
+                    url: url,
+                    type: 'DELETE',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ id: itemId }),
+                    success: function(result) {
+                        alert(result.message);
+                        location.reload();
+                    },
+                    error: function(error) {
+                        alert(`Erreur lors de la suppression du ${itemType}: ${error.responseJSON.error}`);
+                    }
+                });
+            }
+        }
+
+        function toggleForm(formId) {
+            document.getElementById(formId).classList.toggle('hidden');
+        }
+    </script>
 </head>
 <body class="bg-gray-100 p-6">
     <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
@@ -13,15 +69,26 @@
         <!-- Section pour les Cours -->
         <section class="mb-6">
             <h2 class="text-xl font-semibold text-gray-700 mb-4">Gestion des Cours</h2>
-            <form action="{{ url_for('cours_routes.create_cours') }}" method="POST" class="mb-4">
+            <form id="createCoursForm" class="mb-4">
                 <input type="hidden" name="creater_user" value="{{ user.id }}">
                 <input type="text" name="name" placeholder="Nom du cours" required class="border p-2 mb-2">
-                <button type="submit" class="bg-blue-500 text-white p-2">Créer un Cours</button>
+                <select name="classe_id" required class="border p-2 mb-2">
+                    <option value="" disabled selected>Sélectionnez une classe</option>
+                    {% for classe in classes %}
+                        <option value="{{ classe.id }}">{{ classe.name }}</option>
+                    {% endfor %}
+                </select>
+                <input type="text" name="jour" placeholder="Jour (ex: Lundi)" required class="border p-2 mb-2">
+                <input type="text" name="horaire" placeholder="Horaire (ex: 08:00 - 10:00)" required class="border p-2 mb-2">
+                <button type="button" onclick="createItem('{{ url_for('cours_routes.create_cours') }}', {name: document.forms['createCoursForm']['name'].value, creater_user: document.forms['createCoursForm']['creater_user'].value, classe_id: document.forms['createCoursForm']['classe_id'].value, jour: document.forms['createCoursForm']['jour'].value, horaire: document.forms['createCoursForm']['horaire'].value}, 'cours')" class="bg-blue-500 text-white p-2">Créer un Cours</button>
             </form>
             <table class="w-full border-collapse border border-gray-300">
                 <thead class="bg-gray-800 text-white">
                     <tr>
                         <th class="p-2 border">Nom du Cours</th>
+                        <th class="p-2 border">Classe</th>
+                        <th class="p-2 border">Jour</th>
+                        <th class="p-2 border">Horaire</th>
                         <th class="p-2 border">Actions</th>
                     </tr>
                 </thead>
@@ -29,14 +96,23 @@
                     {% for cours in cours %}
                         <tr class="bg-gray-100">
                             <td class="p-2 border">{{ cours.name }}</td>
+                            <td class="p-2 border">{{ cours.classe.name }}</td>
+                            <td class="p-2 border">{{ cours.jour }}</td>
+                            <td class="p-2 border">{{ cours.horaire }}</td>
                             <td class="p-2 border">
-                                <form action="{{ url_for('auth_routes.update_cours', cours_id=cours.id) }}" method="POST" style="display:inline;">
+                                <form id="updateCoursForm{{ cours.id }}" class="inline">
+                                    <input type="hidden" name="id" value="{{ cours.id }}">
                                     <input type="text" name="name" value="{{ cours.name }}" required class="border p-1">
-                                    <button type="submit" class="bg-yellow-500 text-white p-1">Mettre à jour</button>
+                                    <select name="classe_id" required class="border p-1">
+                                        {% for classe in classes %}
+                                            <option value="{{ classe.id }}" {% if classe.id == cours.classe_id %}selected{% endif %}>{{ classe.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <input type="text" name="jour" value="{{ cours.jour }}" required class="border p-1">
+                                    <input type="text" name="horaire" value="{{ cours.horaire }}" required class="border p-1">
+                                    <button type="button" onclick="updateItem('{{ url_for('cours_routes.update_cours') }}', {id: document.forms['updateCoursForm{{ cours.id }}']['id'].value, name: document.forms['updateCoursForm{{ cours.id }}']['name'].value, classe_id: document.forms['updateCoursForm{{ cours.id }}']['classe_id'].value, jour: document.forms['updateCoursForm{{ cours.id }}']['jour'].value, horaire: document.forms['updateCoursForm{{ cours.id }}']['horaire'].value}, 'cours')" class="bg-yellow-500 text-white p-1">Mettre à jour</button>
                                 </form>
-                                <form action="{{ url_for('auth_routes.delete_cours', cours_id=cours.id) }}" method="POST" style="display:inline;">
-                                    <button type="submit" class="bg-red-500 text-white p-1">Supprimer</button>
-                                </form>
+                                <button type="button" onclick="deleteItem('{{ url_for('cours_routes.delete_cours') }}', {{ cours.id }}, 'cours')" class="bg-red-500 text-white p-1">Supprimer</button>
                             </td>
                         </tr>
                     {% endfor %}
@@ -47,18 +123,31 @@
         <!-- Section pour les Devoirs -->
         <section class="mb-6">
             <h2 class="text-xl font-semibold text-gray-700 mb-4">Gestion des Devoirs</h2>
-            <form action="{{ url_for('devoirs_routes.create_devoir') }}" method="POST" class="mb-4">
-                <input type="hidden" name="user_id" value="{{ user.id }}">
+            <form id="createDevoirForm" class="mb-4">
+                <select name="classe_id" required class="border p-2 mb-2">
+                    <option value="" disabled selected>Sélectionnez une classe</option>
+                    {% for classe in classes %}
+                        <option value="{{ classe.id }}">{{ classe.name }}</option>
+                    {% endfor %}
+                </select>
                 <textarea name="text" placeholder="Description du devoir" required class="border p-2 mb-2"></textarea>
-                <button type="submit" class="bg-blue-500 text-white p-2">Créer un Devoir</button>
+                <button type="button" onclick="createItem('{{ url_for('devoirs_routes.create_devoir') }}', {classe_id: document.forms['createDevoirForm']['classe_id'].value, text: document.forms['createDevoirForm']['text'].value}, 'devoir')" class="bg-blue-500 text-white p-2">Créer un Devoir</button>
             </form>
             <ul class="mt-4">
                 {% for devoir in devoirs %}
                     <li class="bg-gray-100 p-2 flex justify-between items-center">
                         {{ devoir.text }}
-                        <form action="{{ url_for('devoirs_routes.delete_devoir', devoir_id=devoir.id) }}" method="POST" style="display:inline;">
-                            <button type="submit" class="bg-red-500 text-white p-1">Supprimer</button>
+                        <form id="updateDevoirForm{{ devoir.id }}" class="inline">
+                            <input type="hidden" name="id" value="{{ devoir.id }}">
+                            <select name="classe_id" required class="border p-1">
+                                {% for classe in classes %}
+                                    <option value="{{ classe.id }}" {% if classe.id == devoir.classe_id %}selected{% endif %}>{{ classe.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <textarea name="text" class="border p-1">{{ devoir.text }}</textarea>
+                            <button type="button" onclick="updateItem('{{ url_for('devoirs_routes.update_devoir') }}', {id: document.forms['updateDevoirForm{{ devoir.id }}']['id'].value, classe_id: document.forms['updateDevoirForm{{ devoir.id }}']['classe_id'].value, text: document.forms['updateDevoirForm{{ devoir.id }}']['text'].value}, 'devoir')" class="bg-yellow-500 text-white p-1">Mettre à jour</button>
                         </form>
+                        <button type="button" onclick="deleteItem('{{ url_for('devoirs_routes.delete_devoir') }}', {{ devoir.id }}, 'devoir')" class="bg-red-500 text-white p-1">Supprimer</button>
                     </li>
                 {% endfor %}
             </ul>
@@ -67,12 +156,22 @@
         <!-- Section pour les Notes -->
         <section class="mb-6">
             <h2 class="text-xl font-semibold text-gray-700 mb-4">Gestion des Notes</h2>
-            <form action="{{ url_for('note_routes.create_note') }}" method="POST" class="mb-4">
-                <input type="number" name="user_id" placeholder="ID de l'élève" required class="border p-2 mb-2">
-                <input type="number" name="cours_id" placeholder="ID du cours" required class="border p-2 mb-2">
+            <form id="createNoteForm" class="mb-4">
+                <select name="user_id" required class="border p-2 mb-2">
+                    <option value="" disabled selected>Sélectionnez un élève</option>
+                    {% for eleve in eleves %}
+                        <option value="{{ eleve.id }}">{{ eleve.nom }} {{ eleve.prenom }}</option>
+                    {% endfor %}
+                </select>
+                <select name="cours_id" required class="border p-2 mb-2">
+                    <option value="" disabled selected>Sélectionnez un cours</option>
+                    {% for cours in cours %}
+                        <option value="{{ cours.id }}">{{ cours.name }}</option>
+                    {% endfor %}
+                </select>
                 <input type="number" name="nb_note" placeholder="Note" required class="border p-2 mb-2">
                 <textarea name="commentaire" placeholder="Commentaire" class="border p-2 mb-2"></textarea>
-                <button type="submit" class="bg-blue-500 text-white p-2">Ajouter une Note</button>
+                <button type="button" onclick="createItem('{{ url_for('note_routes.create_note') }}', {user_id: document.forms['createNoteForm']['user_id'].value, cours_id: document.forms['createNoteForm']['cours_id'].value, nb_note: document.forms['createNoteForm']['nb_note'].value, commentaire: document.forms['createNoteForm']['commentaire'].value}, 'note')" class="bg-blue-500 text-white p-2">Ajouter une Note</button>
             </form>
             <table class="w-full border-collapse border border-gray-300">
                 <thead class="bg-gray-800 text-white">
@@ -92,9 +191,13 @@
                             <td class="p-2 border">{{ note.nb_note }}/20</td>
                             <td class="p-2 border">{{ note.commentaire }}</td>
                             <td class="p-2 border">
-                                <form action="{{ url_for('note_routes.delete_note', note_id=note.id) }}" method="POST" style="display:inline;">
-                                    <button type="submit" class="bg-red-500 text-white p-1">Supprimer</button>
+                                <form id="updateNoteForm{{ note.id }}" class="inline">
+                                    <input type="hidden" name="id" value="{{ note.id }}">
+                                    <input type="number" name="nb_note" value="{{ note.nb_note }}" required class="border p-1">
+                                    <textarea name="commentaire" class="border p-1">{{ note.commentaire }}</textarea>
+                                    <button type="button" onclick="updateItem('{{ url_for('note_routes.update_note') }}', {id: document.forms['updateNoteForm{{ note.id }}']['id'].value, nb_note: document.forms['updateNoteForm{{ note.id }}']['nb_note'].value, commentaire: document.forms['updateNoteForm{{ note.id }}']['commentaire'].value}, 'note')" class="bg-yellow-500 text-white p-1">Mettre à jour</button>
                                 </form>
+                                <button type="button" onclick="deleteItem('{{ url_for('note_routes.delete_note') }}', {{ note.id }}, 'note')" class="bg-red-500 text-white p-1">Supprimer</button>
                             </td>
                         </tr>
                     {% endfor %}
