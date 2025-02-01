@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, render_template, redirect, url_for, flash, session
-from ..models import User, Cours, Devoir, Note, Classe,  classe_eleve
+from ..models import User, Cours, Devoir, Note, Classe, Matiere,  classe_eleve
 from .. import db
 
 bp = Blueprint('auth_routes', __name__)
@@ -43,7 +43,8 @@ def admin_home():
     notes = Note.query.all()
     classes = Classe.query.all()
     eleves = User.query.filter_by(status='etudiant').all()
-    return render_template('admin.html', user=user, cours=cours, devoirs=devoirs, notes=notes, classes=classes, eleves=eleves, users=User.query.all())
+    matieres = Matiere.query.all()
+    return render_template('admin.html', user=user, cours=cours, devoirs=devoirs, notes=notes, classes=classes, eleves=eleves, matieres=matieres, users=User.query.all())
 
 @bp.route('/student_home', methods=['GET'])
 def student_home():

@@ -309,8 +309,40 @@
             </div>
             {% endfor %}
         </section>
+        <!-- Gestion des Matières -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Gestion des Matières</h2>
+            <button class="bg-green-500 text-white px-4 py-2 rounded" onclick="toggleForm('createMatiereForm')">Ajouter une matière</button>
+            <form id="createMatiereForm" class="mt-4 hidden">
+                <input type="text" name="Matiere" placeholder="Nom de la matière" required class="border p-2 mb-2">
+                <button type="button" onclick="createItem('{{ url_for('matiere_routes.create_matiere') }}', {name: document.forms['createMatiereForm']['name'].value}, 'name')" class="bg-blue-500 text-white p-2">Créer</button>
+            </form>
+            <table class="w-full mt-4 border-collapse border border-gray-300">
+                <thead class="bg-gray-800 text-white">
+                    <tr>
+                        <th class="p-2 border">Nom de la Matière</th>
+                        <th class="p-2 border text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for matiere in matieres %}
+                    <tr class="bg-gray-100">
+                        <td class="p-2 border">{{ matiere.name }}</td>
+                        <td class="p-2 border text-right">
+                            <button class="bg-yellow-500 text-white px-2 py-1 rounded" onclick="toggleForm('updateMatiereForm{{ matiere.id }}')">Modifier</button>
+                            <button class="bg-red-500 text-white px-2 py-1 rounded" onclick="deleteItem('{{ url_for('matiere_routes.delete_matiere') }}', {{ matiere.id }}, 'matiere')">Supprimer</button>
+                            <form id="updateMatiereForm{{ matiere.id }}" class="hidden mt-2">
+                                <input type="hidden" name="id" value="{{ matiere.id }}">
+                                <input type="text" name="name" value="{{ matiere.name }}" required class="border p-1">
+                                <button type="button" onclick="updateItem('{{ url_for('matiere_routes.update_matiere') }}', {id: document.forms['updateMatiereForm{{ matiere.id }}']['id'].value, name: document.forms['updateMatiereForm{{ matiere.id }}']['name'].value}, 'name')" class="bg-blue-500 text-white p-1">Mettre à jour</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
     </div>
-
     <script>
         function toggleForm(formId) {
             document.getElementById(formId).classList.toggle('hidden');
