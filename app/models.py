@@ -1,11 +1,24 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from cryptography.fernet import Fernet
+import os
 from . import db
 
 # Générer une clé de chiffrement (à stocker de manière sécurisée)
-encryption_key = Fernet.generate_key()
-cipher_suite = Fernet(encryption_key)
+# Chemin vers le fichier de clé
+key_file = 'secret.key'
+
+# Générer une nouvelle clé et la sauvegarder dans un fichier si elle n'existe pas
+
+
+
+
+
+with open(key_file, 'rb') as f:
+    key = f.read()
+
+# Initialiser Fernet avec la clé
+cipher_suite = Fernet(key)
 
 # Table d'association pour la relation plusieurs-à-plusieurs entre Classe et User
 classe_eleve = db.Table('classe_eleve',
@@ -16,10 +29,10 @@ classe_eleve = db.Table('classe_eleve',
 class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    nom = db.Column(db.String(100), nullable=False)
-    prenom = db.Column(db.String(100), nullable=False)
-    mail = db.Column(db.String(150), unique=True, nullable=False)
-    mdp = db.Column(db.String(255), nullable=False)
+    nom = db.Column(db.String(1000), nullable=False)
+    prenom = db.Column(db.String(1000), nullable=False)
+    mail = db.Column(db.String(1500), unique=True, nullable=False)
+    mdp = db.Column(db.String(2550), nullable=False)
     status = db.Column(db.String(50), nullable=False)
     cours_crees = db.relationship('Cours', foreign_keys='Cours.creater_user', backref='creator', lazy=True)
     notes = db.relationship('Note', backref='student', lazy=True)
