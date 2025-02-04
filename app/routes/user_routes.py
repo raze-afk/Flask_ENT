@@ -3,7 +3,6 @@ from ..models import User, Cours, Note, Devoir, Classe, db, classe_eleve
 
 bp = Blueprint('user_routes', __name__)
 
-
 @bp.route('/api/show/user', methods=['GET'])
 def show_user():
     user_id = request.args.get('id')
@@ -11,6 +10,7 @@ def show_user():
     if user_id:
         user = User.query.get(user_id)
         if user:
+            user.decrypt_personal_info()
             return jsonify({
                 "id": user.id,
                 "nom": user.nom,
@@ -25,14 +25,17 @@ def show_user():
         return jsonify({"error": "Utilisateur non trouvé"}), 404
 
     users = User.query.all()
-    user_list = [{
-        "id": u.id,
-        "nom": u.nom,
-        "prenom": u.prenom,
-        "mail": u.mail,
-        "status": u.status,
-        "classes": [{"id": cl.id, "name": cl.name} for cl in u.classes]
-    } for u in users]
+    user_list = []
+    for u in users:
+        u.decrypt_personal_info()
+        user_list.append({
+            "id": u.id,
+            "nom": u.nom,
+            "prenom": u.prenom,
+            "mail": u.mail,
+            "status": u.status,
+            "classes": [{"id": cl.id, "name": cl.name} for cl in u.classes]
+        })
 
     return jsonify(user_list), 200
 
@@ -55,9 +58,10 @@ def create_user():
             nom=data['nom'],
             prenom=data['prenom'],
             mail=data['mail'],
-            mdp=data['password'],
             status=data['status']
         )
+        new_user.set_password(data['password'])  # Hash the password
+        new_user.encrypt_personal_info()  # Encrypt personal information
         db.session.add(new_user)
         db.session.commit()
 
@@ -95,9 +99,11 @@ def update_user():
         user.nom = data.get('nom', user.nom)
         user.prenom = data.get('prenom', user.prenom)
         user.mail = data.get('mail', user.mail)
-        user.mdp = data.get('password', user.mdp)
+        if 'password' in data:
+            user.set_password(data['password'])  # Hash the new password
         user.status = data.get('status', user.status)
 
+        user.encrypt_personal_info()  # Encrypt personal information
         db.session.commit()
         return jsonify({"message": "Utilisateur mis à jour"}), 200
 
@@ -123,3 +129,4 @@ def delete_user():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+

@@ -1,5 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+from cryptography.fernet import Fernet
 from . import db
+
+# Générer une clé de chiffrement (à stocker de manière sécurisée)
+encryption_key = Fernet.generate_key()
+cipher_suite = Fernet(encryption_key)
 
 # Table d'association pour la relation plusieurs-à-plusieurs entre Classe et User
 classe_eleve = db.Table('classe_eleve',
@@ -18,6 +24,34 @@ class User(db.Model):
     cours_crees = db.relationship('Cours', foreign_keys='Cours.creater_user', backref='creator', lazy=True)
     notes = db.relationship('Note', backref='student', lazy=True)
     classes = db.relationship('Classe', secondary=classe_eleve, backref=db.backref('eleves', lazy='dynamic'))
+
+    def set_password(self, password):
+        """Hash the password and set it to the `mdp` attribute."""
+        self.mdp = generate_password_hash(password)
+
+    def check_password(self, password):
+        """Check the hashed password against the provided password."""
+        return check_password_hash(self.mdp, password)
+
+    def encrypt_field(self, field):
+        """Encrypt a field and return the encrypted value."""
+        return cipher_suite.encrypt(field.encode())
+
+    def decrypt_field(self, field):
+        """Decrypt a field and return the decrypted value."""
+        return cipher_suite.decrypt(field).decode()
+
+    def encrypt_personal_info(self):
+        """Encrypt personal information fields."""
+        self.nom = self.encrypt_field(self.nom)
+        self.prenom = self.encrypt_field(self.prenom)
+        self.mail = self.encrypt_field(self.mail)
+
+    def decrypt_personal_info(self):
+        """Decrypt personal information fields."""
+        self.nom = self.decrypt_field(self.nom)
+        self.prenom = self.decrypt_field(self.prenom)
+        self.mail = self.decrypt_field(self.mail)
 
 class Cours(db.Model):
     __tablename__ = 'cours'
@@ -56,3 +90,4 @@ class Matiere(db.Model):
     __tablename__ = 'matiere'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100), nullable=False)
+
