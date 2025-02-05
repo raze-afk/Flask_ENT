@@ -19,9 +19,6 @@ def login():
         users = User.query.all()
         for user in users:
             decrypted_email = decrypt_data(user.mail)
-            print(user.mail)
-            print(decrypted_email)
-            print(email)
             if decrypted_email == email and user.check_password(password):
                 session['user_id'] = user.id
                 flash('Login successful!', 'success')
@@ -44,10 +41,15 @@ def logout():
 @bp.route('/admin_home', methods=['GET'])
 def admin_home():
     user_id = session.get('user_id')
+    users = User.query.all()
     user = User.query.get(user_id)
-    if user:
-        user.decrypt_personal_info() 
-    else:
+
+    for use in users:
+        use.decrypt_personal_info()
+
+#    if user:
+#        user 
+    if not user:
         flash('User not found', 'danger')
         return redirect(url_for('auth_routes.login'))
 
@@ -59,10 +61,8 @@ def admin_home():
     matieres = Matiere.query.all()
 
     # Déchiffrer les informations personnelles des élèves
-    for eleve in eleves:
-        eleve.decrypt_personal_info()
 
-    return render_template('admin.html', user=user, cours=cours, devoirs=devoirs, notes=notes, classes=classes, eleves=eleves, matieres=matieres, users=User.query.all())
+    return render_template('admin.html', user=user, cours=cours, devoirs=devoirs, notes=notes, classes=classes, eleves=eleves, matieres=matieres, users=users)
 
 @bp.route('/student_home', methods=['GET'])
 def student_home():
