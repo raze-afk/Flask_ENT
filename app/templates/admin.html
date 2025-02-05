@@ -76,7 +76,7 @@
         <option value="professeur">Professeur</option>
         <option value="admin">Admin</option>
     </select>
-    <select name="classe_id" required class="border p-2 mb-2">
+    <select name="classe_id" class="border p-2 mb-2">
         <option value="" disabled selected>Sélectionnez une classe</option>
         {% for classe in classes %}
             <option value="{{ classe.id }}">{{ classe.name }}</option>

@@ -1,8 +1,8 @@
-"""fix small error
+"""caca
 
-Revision ID: c706877a3f32
+Revision ID: 4fb7c96fefd0
 Revises: 
-Create Date: 2025-01-30 20:05:26.167480
+Create Date: 2025-02-05 17:08:45.341282
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c706877a3f32'
+revision = '4fb7c96fefd0'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,12 +23,17 @@ def upgrade():
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('matiere',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('name', sa.String(length=100), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('user',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('nom', sa.String(length=100), nullable=False),
-    sa.Column('prenom', sa.String(length=100), nullable=False),
-    sa.Column('mail', sa.String(length=150), nullable=False),
-    sa.Column('mdp', sa.String(length=255), nullable=False),
+    sa.Column('nom', sa.String(length=1000), nullable=False),
+    sa.Column('prenom', sa.String(length=1000), nullable=False),
+    sa.Column('mail', sa.String(length=1500), nullable=False),
+    sa.Column('mdp', sa.String(length=2550), nullable=False),
     sa.Column('status', sa.String(length=50), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('mail')
@@ -44,18 +49,19 @@ def upgrade():
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.Column('creater_user', sa.Integer(), nullable=False),
-    sa.Column('user_concerner', sa.Integer(), nullable=False),
+    sa.Column('classe_id', sa.Integer(), nullable=False),
     sa.Column('devoir', sa.String(length=100), nullable=True),
+    sa.Column('jour', sa.String(length=50), nullable=True),
     sa.Column('horaire', sa.String(length=50), nullable=True),
+    sa.ForeignKeyConstraint(['classe_id'], ['classe.id'], ),
     sa.ForeignKeyConstraint(['creater_user'], ['user.id'], ),
-    sa.ForeignKeyConstraint(['user_concerner'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('devoir',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('classe_id', sa.Integer(), nullable=False),
     sa.Column('text', sa.String(length=255), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.ForeignKeyConstraint(['classe_id'], ['classe.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('note',
@@ -78,5 +84,6 @@ def downgrade():
     op.drop_table('cours')
     op.drop_table('classe_eleve')
     op.drop_table('user')
+    op.drop_table('matiere')
     op.drop_table('classe')
     # ### end Alembic commands ###
