@@ -18,8 +18,11 @@ def login():
         # Déchiffrer tous les emails dans la base de données pour la comparaison
         users = User.query.all()
         for user in users:
+            decrypted_email = decrypt_data(user.mail)
             print(user.mail)
-            if user.mail ==  encrypt_data(email) and user.check_password(password):
+            print(decrypted_email)
+            print(email)
+            if decrypted_email == email and user.check_password(password):
                 session['user_id'] = user.id
                 flash('Login successful!', 'success')
                 if user.status == 'admin':

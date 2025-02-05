@@ -7,13 +7,8 @@ import base64
 key_file = '../secret.key'
 
 # Générer une nouvelle clé et la sauvegarder dans un fichier si elle n'existe pas
-if not os.path.exists(key_file):
-    key = Fernet.generate_key()  # Génère une clé de 32 bytes
-    with open(key_file, 'wb') as f:
-        f.write(key)
-else:
-    with open(key_file, 'rb') as f:
-        key = f.read()
+with open(key_file, 'rb') as f:
+    key = f.read()
 
 # Initialiser Fernet avec la clé
 cipher_suite = Fernet(key)
