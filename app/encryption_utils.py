@@ -4,20 +4,15 @@ import os
 import base64
 
 # Chemin vers le fichier de clé
-key_file = '../secret.key'
 
-# Générer une nouvelle clé et la sauvegarder dans un fichier si elle n'existe pas
-with open(key_file, 'rb') as f:
-    key = f.read()
+FERNET_KEY = os.environ.get('FERNET_KEY', b'Y6ePPqintYMQTz2p4oFDssUz4ilVPptrbNpPkIxkSoE=')
 
 # Initialiser Fernet avec la clé
-cipher_suite = Fernet(key)
+cipher_suite = Fernet(FERNET_KEY)
 
 def encrypt_data(data):
-    encrypted = cipher_suite.encrypt(data.encode())
-    return base64.urlsafe_b64encode(encrypted).decode()
+    return cipher_suite.encrypt(data.encode())
 
 def decrypt_data(token):
-    encrypted = base64.urlsafe_b64decode(token.encode())
-    return cipher_suite.decrypt(encrypted).decode()
+    return cipher_suite.decrypt(token).decode()
 

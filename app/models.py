@@ -3,22 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from cryptography.fernet import Fernet
 import os
 from . import db
-
-# Générer une clé de chiffrement (à stocker de manière sécurisée)
-# Chemin vers le fichier de clé
-key_file = 'secret.key'
-
-# Générer une nouvelle clé et la sauvegarder dans un fichier si elle n'existe pas
-
-
-
-
-
-with open(key_file, 'rb') as f:
-    key = f.read()
-
-# Initialiser Fernet avec la clé
-cipher_suite = Fernet(key)
+from app.encryption_utils import *
 
 # Table d'association pour la relation plusieurs-à-plusieurs entre Classe et User
 classe_eleve = db.Table('classe_eleve',
