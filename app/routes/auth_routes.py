@@ -4,7 +4,7 @@ from .. import db
 from cryptography.fernet import Fernet
 import os
 from ..encryption_utils import *
-
+import time
 
 bp = Blueprint('auth_routes', __name__)
 
@@ -30,7 +30,9 @@ def login():
                     return redirect(url_for('auth_routes.teacher_home'))
 
         flash('Invalid email or password', 'danger')
+        time.sleep(3)
     return render_template('login.html')
+
 
 @bp.route('/logout')
 def logout():
