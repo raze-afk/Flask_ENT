@@ -3,6 +3,8 @@ from ..models import User, Cours, Devoir, Note, Classe, Matiere, classe_eleve
 from .. import db
 from cryptography.fernet import Fernet
 import os
+from ..encryption_utils import *
+
 
 bp = Blueprint('auth_routes', __name__)
 
@@ -12,18 +14,25 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        user = User.query.filter_by(mail=email).first()
-        if user and user.check_password(password):
-            session['user_id'] = user.id
-            flash('Login successful!', 'success')
-            if user.status == 'admin':
-                return redirect(url_for('auth_routes.admin_home'))
-            elif user.status == 'etudiant':
-                return redirect(url_for('auth_routes.student_home'))
-            elif user.status == 'professeur':
-                return redirect(url_for('auth_routes.teacher_home'))
-        else:
-            flash('Invalid email or password', 'danger')
+
+        # Déchiffrer tous les emails dans la base de données pour la comparaison
+        users = User.query.all()
+        for user in users:
+            decrypted_email = decrypt_data(user.mail)
+            print(user.mail)
+            print(decrypted_email)
+            print(email)
+            if decrypted_email == email and user.check_password(password):
+                session['user_id'] = user.id
+                flash('Login successful!', 'success')
+                if user.status == 'admin':
+                    return redirect(url_for('auth_routes.admin_home'))
+                elif user.status == 'etudiant':
+                    return redirect(url_for('auth_routes.student_home'))
+                elif user.status == 'professeur':
+                    return redirect(url_for('auth_routes.teacher_home'))
+
+        flash('Invalid email or password', 'danger')
     return render_template('login.html')
 
 @bp.route('/logout')
