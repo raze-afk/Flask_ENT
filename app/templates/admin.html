@@ -66,24 +66,24 @@
         <section class="mb-6">
             <h2 class="text-xl font-semibold text-gray-700 mb-4">Gestion des Utilisateurs</h2>
             <button class="bg-green-500 text-white px-4 py-2 rounded" onclick="toggleForm('createUserForm')">Ajouter un utilisateur</button>
-<form id="createUserForm" class="mt-4 hidden">
-    <input type="text" name="nom" placeholder="Nom" required class="border p-2 mb-2">
-    <input type="text" name="prenom" placeholder="Prénom" required class="border p-2 mb-2">
-    <input type="email" name="mail" placeholder="Email" required class="border p-2 mb-2">
-    <input type="password" name="password" placeholder="Mot de passe" required class="border p-2 mb-2">
-    <select name="status" required class="border p-2 mb-2">
-        <option value="etudiant">Étudiant</option>
-        <option value="professeur">Professeur</option>
-        <option value="admin">Admin</option>
-    </select>
-    <select name="classe_id" class="border p-2 mb-2">
-        <option value="" disabled selected>Sélectionnez une classe</option>
-        {% for classe in classes %}
-            <option value="{{ classe.id }}">{{ classe.name }}</option>
-        {% endfor %}
-    </select>
-    <button type="button" onclick="createItem('{{ url_for('user_routes.create_user') }}', {nom: document.forms['createUserForm']['nom'].value, prenom: document.forms['createUserForm']['prenom'].value, mail: document.forms['createUserForm']['mail'].value, password: document.forms['createUserForm']['password'].value, status: document.forms['createUserForm']['status'].value, classe_id: document.forms['createUserForm']['classe_id'].value}, 'utilisateur')" class="bg-blue-500 text-white p-2">Créer</button>
-</form>
+            <form id="createUserForm" class="mt-4 hidden">
+                <input type="text" name="nom" placeholder="Nom" required class="border p-2 mb-2">
+                <input type="text" name="prenom" placeholder="Prénom" required class="border p-2 mb-2">
+                <input type="email" name="mail" placeholder="Email" required class="border p-2 mb-2">
+                <input type="password" name="password" placeholder="Mot de passe" required class="border p-2 mb-2">
+                <select name="status" required class="border p-2 mb-2">
+                    <option value="etudiant">Étudiant</option>
+                    <option value="professeur">Professeur</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <select name="classe_id" class="border p-2 mb-2">
+                    <option value="" disabled selected>Sélectionnez une classe</option>
+                    {% for classe in classes %}
+                        <option value="{{ classe.id }}">{{ classe.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="button" onclick="createItem('{{ url_for('user_routes.create_user') }}', {nom: document.forms['createUserForm']['nom'].value, prenom: document.forms['createUserForm']['prenom'].value, mail: document.forms['createUserForm']['mail'].value, password: document.forms['createUserForm']['password'].value, status: document.forms['createUserForm']['status'].value, classe_id: document.forms['createUserForm']['classe_id'].value}, 'utilisateur')" class="bg-blue-500 text-white p-2">Créer</button>
+            </form>
 
             <table class="w-full mt-4 border-collapse border border-gray-300">
                 <thead class="bg-gray-800 text-white">
@@ -125,24 +125,47 @@
             <h2 class="text-xl font-semibold text-gray-700 mb-4">Gestion des Cours</h2>
             <button class="bg-green-500 text-white px-4 py-2 rounded" onclick="toggleForm('createCoursForm')">Ajouter un cours</button>
             <form id="createCoursForm" class="mt-4 hidden">
-            <input type="text" name="name" placeholder="Nom du cours" required class="border p-2 mb-2">
-            <input type="hidden" name="creater_user" value="{{ user.id }}">
-            <select name="classe_id" required class="border p-2 mb-2">
-              <option value="" disabled selected>Sélectionnez une classe</option>
-              {% for classe in classes %}
-                <option value="{{ classe.id }}">{{ classe.name }}</option>
-              {% endfor %}
-            </select>
-            <input type="text" name="jour" placeholder="Jour (ex: Lundi)" required class="border p-2 mb-2">
-            <input type="text" name="horaire" placeholder="Horaire (ex: 08:00 - 10:00)" required class="border p-2 mb-2">
-            <input type="text" name="devoir" placeholder="Devoir (optionnel)" class="border p-2 mb-2">
-            <button type="button" onclick="createItem('{{ url_for('cours_routes.create_cours') }}', {name: document.forms['createCoursForm']['name'].value, creater_user: document.forms['createCoursForm']['creater_user'].value, classe_id: document.forms['createCoursForm']['classe_id'].value, jour: document.forms['createCoursForm']['jour'].value, horaire: document.forms['createCoursForm']['horaire'].value, devoir: document.forms['createCoursForm']['devoir'].value}, 'cours')" class="bg-blue-500 text-white p-2">Créer</button>
+                <input type="text" name="name" placeholder="Nom du cours" required class="border p-2 mb-2">
+                <input type="hidden" name="creater_user" value="{{ user.id }}">
+                <select name="classe_id" required class="border p-2 mb-2">
+                    <option value="" disabled selected>Sélectionnez une classe</option>
+                    {% for classe in classes %}
+                        <option value="{{ classe.id }}">{{ classe.name }}</option>
+                    {% endfor %}
+                </select>
+                <select name="matiere_id" required class="border p-2 mb-2">
+                    <option value="" disabled selected>Sélectionnez une Matière</option>
+                    {% for matiere in matieres %}
+                        <option value="{{ matiere.id }}">{{ matiere.name }}</option>
+                    {% endfor %}
+                </select>
+                <select name="jour" required class="border p-2 mb-2">
+                    <option value="" disabled selected>Sélectionnez un jour</option>
+                    <option value="Lundi">Lundi</option>
+                    <option value="Mardi">Mardi</option>
+                    <option value="Mercredi">Mercredi</option>
+                    <option value="Jeudi">Jeudi</option>
+                    <option value="Vendredi">Vendredi</option>
+                </select>
+                <select name="horaire" required class="border p-2 mb-2">
+                    <option value="" disabled selected>Sélectionnez un horaire</option>
+                    <option value="08:00 - 10:00">08:00 - 10:00</option>
+                    <option value="10:00 - 12:00">10:00 - 12:00</option>
+                    <option value="13:00 - 15:00">13:00 - 15:00</option>
+                    <option value="15:00 - 17:00">15:00 - 17:00</option>
+                </select>
+                <input type="text" name="devoir" placeholder="Devoir (optionnel)" class="border p-2 mb-2">
+                <button type="button" onclick="createItem('{{ url_for('cours_routes.create_cours') }}', {name: document.forms['createCoursForm']['name'].value, creater_user: document.forms['createCoursForm']['creater_user'].value, classe_id: document.forms['createCoursForm']['classe_id'].value, matiere_id: document.forms['createCoursForm']['matiere_id'].value, jour: document.forms['createCoursForm']['jour'].value, horaire: document.forms['createCoursForm']['horaire'].value, devoir: document.forms['createCoursForm']['devoir'].value}, 'cours')" class="bg-blue-500 text-white p-2">Créer</button>
             </form>
 
             <table class="w-full mt-4 border-collapse border border-gray-300">
                 <thead class="bg-gray-800 text-white">
                     <tr>
                         <th class="p-2 border">Nom du Cours</th>
+                        <th class="p-2 border">Classe</th>
+                        <th class="p-2 border">Matière</th>
+                        <th class="p-2 border">Jour</th>
+                        <th class="p-2 border">Horaire</th>
                         <th class="p-2 border text-right">Actions</th>
                     </tr>
                 </thead>
@@ -150,6 +173,10 @@
                     {% for cours in cours %}
                     <tr class="bg-gray-100">
                         <td class="p-2 border">{{ cours.name }}</td>
+                        <td class="p-2 border">{{ cours.classe.name }}</td>
+                        <td class="p-2 border">{{ cours.matiere.name }}</td>
+                        <td class="p-2 border">{{ cours.jour }}</td>
+                        <td class="p-2 border">{{ cours.horaire }}</td>
                         <td class="p-2 border text-right">
                             <button class="bg-yellow-500 text-white px-2 py-1 rounded" onclick="toggleForm('updateCoursForm{{ cours.id }}')">Modifier</button>
                             <button class="bg-red-500 text-white px-2 py-1 rounded" onclick="deleteItem('{{ url_for('cours_routes.delete_cours') }}', {{ cours.id }}, 'cours')">Supprimer</button>
@@ -161,9 +188,25 @@
                                         <option value="{{ classe.id }}" {% if classe.id == cours.classe_id %}selected{% endif %}>{{ classe.name }}</option>
                                     {% endfor %}
                                 </select>
-                                <input type="text" name="jour" value="{{ cours.jour }}" required class="border p-1">
-                                <input type="text" name="horaire" value="{{ cours.horaire }}" required class="border p-1">
-                                <button type="button" onclick="updateItem('{{ url_for('cours_routes.update_cours') }}', {id: document.forms['updateCoursForm{{ cours.id }}']['id'].value, name: document.forms['updateCoursForm{{ cours.id }}']['name'].value, classe_id: document.forms['updateCoursForm{{ cours.id }}']['classe_id'].value, jour: document.forms['updateCoursForm{{ cours.id }}']['jour'].value, horaire: document.forms['updateCoursForm{{ cours.id }}']['horaire'].value}, 'cours')" class="bg-blue-500 text-white p-1">Mettre à jour</button>
+                                <select name="matiere_id" required class="border p-1">
+                                    {% for matiere in matieres %}
+                                        <option value="{{ matiere.id }}" {% if matiere.id == cours.matiere_id %}selected{% endif %}>{{ matiere.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <select name="jour" required class="border p-1">
+                                    <option value="Lundi" {% if cours.jour == 'Lundi' %}selected{% endif %}>Lundi</option>
+                                    <option value="Mardi" {% if cours.jour == 'Mardi' %}selected{% endif %}>Mardi</option>
+                                    <option value="Mercredi" {% if cours.jour == 'Mercredi' %}selected{% endif %}>Mercredi</option>
+                                    <option value="Jeudi" {% if cours.jour == 'Jeudi' %}selected{% endif %}>Jeudi</option>
+                                    <option value="Vendredi" {% if cours.jour == 'Vendredi' %}selected{% endif %}>Vendredi</option>
+                                </select>
+                                <select name="horaire" required class="border p-1">
+                                    <option value="08:00 - 10:00" {% if cours.horaire == '08:00 - 10:00' %}selected{% endif %}>08:00 - 10:00</option>
+                                    <option value="10:00 - 12:00" {% if cours.horaire == '10:00 - 12:00' %}selected{% endif %}>10:00 - 12:00</option>
+                                    <option value="13:00 - 15:00" {% if cours.horaire == '13:00 - 15:00' %}selected{% endif %}>13:00 - 15:00</option>
+                                    <option value="15:00 - 17:00" {% if cours.horaire == '15:00 - 17:00' %}selected{% endif %}>15:00 - 17:00</option>
+                                </select>
+                                <button type="button" onclick="updateItem('{{ url_for('cours_routes.update_cours') }}', {id: document.forms['updateCoursForm{{ cours.id }}']['id'].value, name: document.forms['updateCoursForm{{ cours.id }}']['name'].value, classe_id: document.forms['updateCoursForm{{ cours.id }}']['classe_id'].value, matiere_id: document.forms['updateCoursForm{{ cours.id }}']['matiere_id'].value, jour: document.forms['updateCoursForm{{ cours.id }}']['jour'].value, horaire: document.forms['updateCoursForm{{ cours.id }}']['horaire'].value}, 'cours')" class="bg-blue-500 text-white p-1">Mettre à jour</button>
                             </form>
                         </td>
                     </tr>
@@ -234,8 +277,9 @@
                 <thead class="bg-gray-800 text-white">
                     <tr>
                         <th class="p-2 border">Élève</th>
-                        <th class="p-2 border">Matière</th>
+                        <th class="p-2 border">Cours</th>
                         <th class="p-2 border">Note</th>
+                        <th class="p-2 border">Commentaire</th>
                         <th class="p-2 border text-right">Actions</th>
                     </tr>
                 </thead>
@@ -245,6 +289,7 @@
                         <td class="p-2 border">{{ note.user.nom }} {{ note.user.prenom }}</td>
                         <td class="p-2 border">{{ note.cours.name }}</td>
                         <td class="p-2 border">{{ note.nb_note }}</td>
+                        <td class="p-2 border">{{ note.commentaire }}</td>
                         <td class="p-2 border text-right">
                             <button class="bg-yellow-500 text-white px-2 py-1 rounded" onclick="toggleForm('updateNoteForm{{ note.id }}')">Modifier</button>
                             <button class="bg-red-500 text-white px-2 py-1 rounded" onclick="deleteItem('{{ url_for('note_routes.delete_note') }}', {{ note.id }}, 'note')">Supprimer</button>
@@ -309,13 +354,15 @@
             </div>
             {% endfor %}
         </section>
+
         <!-- Gestion des Matières -->
         <section class="mb-6">
             <h2 class="text-xl font-semibold text-gray-700 mb-4">Gestion des Matières</h2>
             <button class="bg-green-500 text-white px-4 py-2 rounded" onclick="toggleForm('createMatiereForm')">Ajouter une matière</button>
             <form id="createMatiereForm" class="mt-4 hidden">
-                <input type="text" name="Matiere" placeholder="Nom de la matière" required class="border p-2 mb-2">
-                <button type="button" onclick="createItem('{{ url_for('matiere_routes.create_matiere') }}', {name: document.forms['createMatiereForm']['name'].value}, 'name')" class="bg-blue-500 text-white p-2">Créer</button>
+                <input type="text" name="name" placeholder="Nom de la matière" required class="border p-2 mb-2">
+                <input type="hidden" name="prof_id" value="{{ user_id }}">
+                <button type="button" onclick="createItem('{{ url_for('matiere_routes.create_matiere') }}', {name: document.forms['createMatiereForm']['name'].value, prof_id: document.forms['createMatiereForm']['prof_id'].value}, 'matiere')" class="bg-blue-500 text-white p-2">Créer</button>
             </form>
             <table class="w-full mt-4 border-collapse border border-gray-300">
                 <thead class="bg-gray-800 text-white">
@@ -334,7 +381,7 @@
                             <form id="updateMatiereForm{{ matiere.id }}" class="hidden mt-2">
                                 <input type="hidden" name="id" value="{{ matiere.id }}">
                                 <input type="text" name="name" value="{{ matiere.name }}" required class="border p-1">
-                                <button type="button" onclick="updateItem('{{ url_for('matiere_routes.update_matiere') }}', {id: document.forms['updateMatiereForm{{ matiere.id }}']['id'].value, name: document.forms['updateMatiereForm{{ matiere.id }}']['name'].value}, 'name')" class="bg-blue-500 text-white p-1">Mettre à jour</button>
+                                <button type="button" onclick="updateItem('{{ url_for('matiere_routes.update_matiere') }}', {id: document.forms['updateMatiereForm{{ matiere.id }}']['id'].value, name: document.forms['updateMatiereForm{{ matiere.id }}']['name'].value}, 'matiere')" class="bg-blue-500 text-white p-1">Mettre à jour</button>
                             </form>
                         </td>
                     </tr>
@@ -350,4 +397,3 @@
     </script>
 </body>
 </html>
-

@@ -8,10 +8,12 @@ bp = Blueprint('matiere_routes', __name__)
 def create_matiere():
     try:
         data = request.json
+
         if not all(key in data for key in ['name']):
             return jsonify({"error": "Données incomplètes"}), 400
 
-        new_matiere = Matiere(name=data['name'])
+
+        new_matiere = Matiere(name=data['name'], prof_id=data['prof_id'])
 
         db.session.add(new_matiere)
         db.session.commit()
@@ -31,12 +33,12 @@ def update_matiere():
 
         matiere = Matiere.query.get(id)
         if not matiere:
-            return jsonify({"error": "Devoir non trouvé"}), 404
+            return jsonify({"error": "Matiere non trouvé"}), 404
 
         matiere.name = data.get('name', data)
 
         db.session.commit()
-        return jsonify({"message": "Devoir mis à jour"}), 200
+        return jsonify({"message": "Matiere mis à jour"}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500

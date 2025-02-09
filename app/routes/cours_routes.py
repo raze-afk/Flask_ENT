@@ -8,16 +8,18 @@ bp = Blueprint('cours_routes', __name__)
 def create_cours():
     try:
         data = request.json
-        if not all(key in data for key in ['name', 'creater_user', 'classe_id', 'jour', 'horaire']):
+        print(data)
+        if not all(key in data for key in ['name', 'creater_user', 'classe_id', 'matiere_id', 'jour', 'horaire']):
             return jsonify({"error": "Données incomplètes"}), 400
 
         new_cours = Cours(
             name=data['name'],
             creater_user=data['creater_user'],
             classe_id=data['classe_id'],
+            matiere_id=data['matiere_id'],
             jour=data['jour'],
             horaire=data['horaire'],
-            devoir=data.get('devoir', None)
+            devoir=data.get('devoir_id', None)
         )
 
         db.session.add(new_cours)
@@ -43,6 +45,7 @@ def update_cours():
         cours.name = data.get('name', cours.name)
         cours.creater_user = data.get('creater_user', cours.creater_user)
         cours.classe_id = data.get('classe_id', cours.classe_id)
+        cours.matiere_id = data.get('matiere_id', cours.matiere_id)
         cours.jour = data.get('jour', cours.jour)
         cours.horaire = data.get('horaire', cours.horaire)
         cours.devoir = data.get('devoir', cours.devoir)

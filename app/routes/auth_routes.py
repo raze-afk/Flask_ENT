@@ -64,7 +64,7 @@ def admin_home():
 
     # Déchiffrer les informations personnelles des élèves
 
-    return render_template('admin.html', user=user, cours=cours, devoirs=devoirs, notes=notes, classes=classes, eleves=eleves, matieres=matieres, users=users)
+    return render_template('admin.html', user=user, cours=cours, devoirs=devoirs, notes=notes, classes=classes, eleves=eleves, matieres=matieres, users=users, user_id=user_id)
 
 @bp.route('/student_home', methods=['GET'])
 def student_home():
@@ -97,10 +97,11 @@ def teacher_home():
     notes = Note.query.all()
     classes = Classe.query.all()
     eleves = User.query.filter_by(status='etudiant').all()
+    matieres = Matiere.query.all()
 
     # Déchiffrer les informations personnelles des élèves
     for eleve in eleves:
         eleve.decrypt_personal_info()
 
-    return render_template('teacher.html', user=user, cours=cours, devoirs=devoirs, notes=notes, classes=classes, eleves=eleves)
+    return render_template('teacher.html', user=user, cours=cours, devoirs=devoirs, notes=notes, classes=classes, eleves=eleves, matieres=matieres)
 
