@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate  # Ajout de Flask-Migrate
+import os
 
 db = SQLAlchemy()
 migrate = Migrate()  # Initialisation de Flask-Migrate
@@ -8,7 +9,7 @@ migrate = Migrate()  # Initialisation de Flask-Migrate
 def create_app():
     app = Flask(__name__)
     app.config["DEBUG"] = True
-    app.config['SECRET_KEY'] = 'SECRET'
+    app.config['SECRET_KEY'] = os.urandom(24)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost/ENT?collation=utf8mb4_general_ci'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 

@@ -31,7 +31,7 @@ class User(db.Model):
         """Check the hashed password against the provided password."""
         return check_password_hash(self.mdp, password)
 
-    def encrypt_field(self, field):
+    def encrypt_field(self, field):           
         """Encrypt a field and return the encrypted value."""
         return cipher_suite.encrypt(field.encode())
 
@@ -60,8 +60,9 @@ class Cours(db.Model):
     devoir = db.Column(db.String(100), nullable=True)
     jour = db.Column(db.String(50), nullable=True)
     horaire = db.Column(db.String(50), nullable=True)
+    matiere_id = db.Column(db.Integer, db.ForeignKey('matiere.id'), nullable=False)  # Corrected line   
     classe = db.relationship('Classe', backref=db.backref('cours_list', lazy=True))
-
+    matiere_id = db.Column(db.I)
 class Note(db.Model):
     __tablename__ = 'note'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -88,4 +89,11 @@ class Matiere(db.Model):
     __tablename__ = 'matiere'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100), nullable=False)
-
+    cours = db.relationship('Cours', backref='matiere', lazy=True)
+    user = db.relationship('User', backref='prof_name', lazy=True)
+    
+op.create_table('matiere',
+sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+sa.Column('matiere', sa.String(length=100), nullable=False),
+sa.PrimaryKeyConstraint('id')
+)
