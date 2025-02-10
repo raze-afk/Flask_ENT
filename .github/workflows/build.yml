@@ -26,4 +26,4 @@ jobs:
       - name: Exécution des tests
         env:
           DATABASE_URL: "mysql://root:root@localhost:3306/ENT"
-        run: pytest tests/
+        run: pytest .
