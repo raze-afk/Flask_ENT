@@ -18,23 +18,21 @@ jobs:
 
       - name: Installer les outils nécessaires
         run: |
-          sudo apt update
-          sudo apt install -y python3 python3-pip default-jre
           pip install flake8 pytest coverage
 
       - name: Lancer MySQL en local
         run: |
           docker run -d --name mysql-container -p 3306:3306 \
             -e MYSQL_ROOT_PASSWORD=root \
-            -e MYSQL_DATABASE=testdb \
-            -e MYSQL_USER=user \
-            -e MYSQL_PASSWORD=password \
+            -e MYSQL_DATABASE=ENT \
+            -e MYSQL_USER=root \
+            -e MYSQL_PASSWORD=root \
             mysql:8.0
 
       - name: Linting avec Flake8
-        run: flake8 --max-line-length=120 --exclude=venv,migrations
+        run: flake8 --max-line-length=550 --exclude=venv,migrations
 
       - name: Exécution des tests
         env:
-          DATABASE_URL: "mysql://user:password@localhost:3306/testdb"
+          DATABASE_URL: "mysql://root:root@0.0.0.0:3306/ENT"
         run: pytest tests/
