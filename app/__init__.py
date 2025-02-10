@@ -10,7 +10,7 @@ def create_app():
     app = Flask(__name__)
     app.config["DEBUG"] = True
     app.config['SECRET_KEY'] = os.urandom(24)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost/ENT?collation=utf8mb4_general_ci'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost/ENT?collation=utf8mb4_general_ci'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)

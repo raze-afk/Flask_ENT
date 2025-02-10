@@ -1,8 +1,8 @@
-"""relation-matiere
+"""nothing
 
-Revision ID: 28c083cab0f8
+Revision ID: a81b8d4e6c79
 Revises: 
-Create Date: 2025-02-09 15:55:40.614487
+Create Date: 2025-02-09 19:38:58.385714
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '28c083cab0f8'
+revision = 'a81b8d4e6c79'
 down_revision = None
 branch_labels = None
 depends_on = None

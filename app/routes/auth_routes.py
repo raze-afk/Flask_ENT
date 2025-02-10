@@ -9,7 +9,7 @@ import time
 bp = Blueprint('auth_routes', __name__)
 
 
-@bp.route('/login', methods=['GET', 'POST'])
+@bp.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form['email']
