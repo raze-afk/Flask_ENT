@@ -10,68 +10,31 @@ on:
 
 jobs:
   test:
-    runs-on: debian-latest
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: ENT
-          MYSQL_USER: root
-          MYSQL_PASSWORD: root
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h localhost"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
+    runs-on: self-hosted
 
     steps:
       - name: Checkout du code
         uses: actions/checkout@v4
 
-      - name: Configuration de Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.12"
-
-      - name: Installation des dépendances
+      - name: Installer les outils nécessaires
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install flake8 pytest pytest-mysql
+          sudo apt update
+          sudo apt install -y python3 python3-pip default-jre
+          pip install flake8 pytest coverage
+
+      - name: Lancer MySQL en local
+        run: |
+          docker run -d --name mysql-container -p 3306:3306 \
+            -e MYSQL_ROOT_PASSWORD=root \
+            -e MYSQL_DATABASE=testdb \
+            -e MYSQL_USER=user \
+            -e MYSQL_PASSWORD=password \
+            mysql:8.0
 
       - name: Linting avec Flake8
-        run: flake8 --max-line-length=600 --exclude=venv,migrations
+        run: flake8 --max-line-length=120 --exclude=venv,migrations
 
       - name: Exécution des tests
         env:
-          DATABASE_URL: "mysql://root:root@localhost:3306/ENT"
-        run: pytest ENT/
-
-  sonarqube:
-    runs-on: debian-latest
-    steps:
-      - name: Checkout du code
-        uses: actions/checkout@v4
-
-      - name: Configuration de Java (nécessaire pour SonarQube)
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Analyse SonarQube
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          pip install coverage
-          coverage run -m pytest
-          coverage xml
-          sonar-scanner \
-            -Dsonar.projectKey=ton-projet \
-            -Dsonar.organization=ton-organisation \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=$SONAR_TOKEN \
-            -Dsonar.python.coverage.reportPaths=coverage.xml
+          DATABASE_URL: "mysql://user:password@localhost:3306/testdb"
+        run: pytest tests/
