@@ -1,7 +1,6 @@
 # encryption_utils.py
 from cryptography.fernet import Fernet
 import os
-import base64
 
 FERNET_KEY = os.environ.get('FERNET_KEY')
 
@@ -19,4 +18,3 @@ def encrypt_data(data):
 
 def decrypt_data(token):
     return cipher_suite.decrypt(token).decode()
-
