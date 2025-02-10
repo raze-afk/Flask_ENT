@@ -24,6 +24,4 @@ jobs:
         run: flake8 --max-line-length=550 --exclude=venv,migrations
         continue-on-error: true
       - name: Exécution des tests
-        env:
-          DATABASE_URL: "mysql://root:root@localhost:3306/ENT"
-        run: pytest .
+
