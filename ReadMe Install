@@ -1,0 +1,7 @@
+Étapes à suivres afin de lancer notre projet :
+Mettre à la racine du projet le fichier "create_admin.py", 
+puis creer la base de donné Mysql et la nommer "ENT" avec identifiant "root" "root". 
+Une fois "requirements.txt" installé allez a la racine du projet dans un terminal et écrire:
+"flask db init" 
+"flask db migrate -m "basededonne"
+"flask db upgrade"
