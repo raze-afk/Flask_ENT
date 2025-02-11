@@ -37,6 +37,14 @@ jobs:
 
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.projectKey=raze-afk_Flask_ENT_7057af60-a321-41f7-93fd-d924ace2882e
+            -Dsonar.projectName=Flask_ENT
+            -Dsonar.projectVersion=1.0
+            -Dsonar.sources=.
+            -Dsonar.language=py
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: http://127.0.0.1:9000/
