@@ -25,3 +25,17 @@ jobs:
         continue-on-error: true
       - name: Exécution des tests
 
+  sonarqube:
+    name: SONAR_TOKEN
+    runs-on: self-hosted
+    
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+        fetch-depth: 0
+    - name: SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@master
+      env:
+        SONAR_TOKEN: sqp_3daafdbb902755c1d3a7f48209f4c6d4a36ca149
+        SONAR_HOST_URL: http://127.0.0.1:9000/
