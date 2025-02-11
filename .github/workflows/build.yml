@@ -23,19 +23,26 @@ jobs:
       - name: Linting avec Flake8
         run: flake8 --max-line-length=550 --exclude=venv,migrations
         continue-on-error: true
+
       - name: Exécution des tests
+        env:
+          DATABASE_URL: "mysql://root:root@localhost:3306/ENT"
+        run: pytest tests/
+        continue-on-error: true
 
   sonarqube:
-    name: SONAR_TOKEN
+    name: SonarQube Scan
     runs-on: self-hosted
-    
+
     steps:
-    - uses: actions/checkout@v2
-      with:
-        # Disabling shallow clone is recommended for improving relevancy of reporting
-        fetch-depth: 0
-    - name: SonarQube Scan
-      uses: sonarsource/sonarqube-scan-action@master
-      env:
-        SONAR_TOKEN: sqp_3daafdbb902755c1d3a7f48209f4c6d4a36ca149
-        SONAR_HOST_URL: http://127.0.0.1:9000/
+      - name: Checkout du code
+        uses: actions/checkout@v2
+        with:
+          # Désactiver le clone superficiel est recommandé pour améliorer la pertinence des rapports
+          fetch-depth: 0
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: http://127.0.0.1:9000/
